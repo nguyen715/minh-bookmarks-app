@@ -1,0 +1,110 @@
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Text&display=swap');
+
+body {
+  background-color: #eee;
+  padding: 20px;
+}
+
+#logo {
+  display: block;
+  margin: 20px auto;
+  width: 380px;
+  max-width: 100%;
+}
+
+#create-button {
+  display: block;
+  margin: 0 auto 30px auto;
+  width: 220px;
+}
+
+.bookmark-element {
+  border-style: solid;
+  border-color: #790000;
+  border-radius: 15px;
+  border-width: 1px;
+  background-color: #e2e2e2;
+  margin: 10px;
+  padding: 20px;
+}
+
+.bookmark-element *, #create-view * {
+  font-family: 'Crimson Text', serif;
+}
+
+.bookmark-section {
+  margin-bottom: 20px;
+}
+
+.bookmark-buttons {
+  margin-bottom: 0;
+}
+
+.bookmark-rating {
+  display: flex;
+  /* flex-direction: column; */
+}
+
+.star-rating {
+  margin-left: 20px;
+}
+
+.star-rating img {
+  width: 20px;
+}
+
+.bookmark-buttons {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.bookmark-buttons img {
+  height: 30px;  
+}
+
+#create-view {
+  text-align: center;
+}
+
+#create-view h2 {
+  text-align: center;
+}
+
+#create-view form {
+  display: inline-block;
+  text-align: left;
+}
+
+#create-view .form-field {
+  margin-left: 20px;
+  margin-bottom: 15px;
+}
+
+@media all and (min-width: 700px) {
+  #create-view .form-field {
+    margin-left: 0;
+  }
+}
+
+#create-view .form-field * {
+  vertical-align: middle;
+}
+
+#create-view label {
+  display: inline-block;
+  width: 100px;
+}
+
+#create-view input[type=text], input[type=url], textarea {
+  width: 300px;
+}
+
+#create-view textarea {
+  height: 100px;
+}
+
+#create-view .button-section {
+  display: flex;
+  justify-content: space-evenly;
+  margin-top: 40px;
+}
