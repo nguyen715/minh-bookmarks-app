@@ -28,6 +28,13 @@ body {
   padding: 20px;
 }
 
+@media all and (min-width: 700px) {
+  .bookmark-element {
+    max-width: 600px;
+    margin: 0px auto 20px auto;
+  }
+}
+
 .bookmark-element *, #create-view * {
   font-family: 'Crimson Text', serif;
 }
@@ -107,4 +114,11 @@ body {
   display: flex;
   justify-content: space-evenly;
   margin-top: 40px;
+}
+
+@media all and (min-width: 700px) {
+  .bookmark-element {
+    max-width: 600px;
+    margin: 0px auto 20px auto;
+  }
 }
