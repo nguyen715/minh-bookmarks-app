@@ -1,13 +1,9 @@
 import store from './store.js';
 import api from './api.js';
 
-// console.log(store.bookmarks);
-
 const render = function (generatingFunction) {
   $('main').html(generatingFunction);
   bindEventListeners();
-  console.log('store.bookmarks.length is: ' + store.bookmarks.length);
-  // console.log('api is: ' + api.getBookmarks());
 }
 
 const generateStarRatingElement = function (bookmark) {
@@ -27,16 +23,8 @@ return ratingImageString;
 
 // helper function only meant to be used in generateBookmarkListString function
 const generateBookmarkElement = function (bookmark) {
-  let bookmarkClass = "";
-  if(bookmark.expanded) {
-    bookmarkClass = "expanded";
-  }
-  else {
-    bookmarkClass = "";
-  }
-  
-  return `
-    <div class="bookmark-element ${bookmarkClass}" data-id="${bookmark.id}">
+  let bookmarkElementString = `
+    <div class="bookmark-element" data-id="${bookmark.id}">
       <div class="bookmark-section">
         <div>Title:</div>
         <div>${bookmark.title}</div>
@@ -45,39 +33,113 @@ const generateBookmarkElement = function (bookmark) {
         <div class="flex-item">Rating:</div>
         ${generateStarRatingElement(bookmark)}
       </div>
+  `;
+
+  if(bookmark.expanded) {
+    bookmarkElementString += `
       <div class="bookmark-section">
-        <div>Description:</div>
-        <div>${bookmark.desc}</div>
-      </div>
-      <div class="bookmark-section">
-        <div class="bookmark-link"><a href="${bookmark.url}">Visit Site</a></div>
-      </div>
-      <div class="bookmark-buttons bookmark-section">
-        <!-- disable edit button for now
-        <img class="flex-item edit-button" src="./images/edit-button.png" alt="Edit Button">
-        -->
-        <img class="flex-item delete-button" src="./images/delete-button.png" alt="Delete Button">
-      </div>
+          <div>Description:</div>
+          <div>${bookmark.desc}</div>
+        </div>
+        <div class="bookmark-section">
+          <div class="bookmark-link"><a href="${bookmark.url}">Visit Site</a></div>
+        </div>
+        <div class="bookmark-buttons bookmark-section">
+          <!-- disable edit button for now
+          <img class="flex-item edit-button" src="./images/edit-button.png" alt="Edit Button">
+          -->
+          <img class="flex-item delete-button" src="./images/delete-button.png" alt="Delete Button">
+        </div>    
+    `;
+  }
+
+  else {
+    bookmarkElementString += `
+      <span class="expand-prompt">(Click to expand)</span>
+    `;
+  }
+
+  bookmarkElementString += `
     </div>
   `;
+
+  // let bookmarkClass = "";
+  // if(bookmark.expanded) {
+  //   bookmarkClass = "expanded";
+  // }
+  // else {
+  //   bookmarkClass = "";
+  // }
+
+  return bookmarkElementString;
+  
+  // return `
+  //   <div class="bookmark-element ${bookmarkClass}" data-id="${bookmark.id}">
+  //     <div class="bookmark-section">
+  //       <div>Title:</div>
+  //       <div>${bookmark.title}</div>
+  //     </div>  
+  //     <div class="bookmark-rating bookmark-section">
+  //       <div class="flex-item">Rating:</div>
+  //       ${generateStarRatingElement(bookmark)}
+  //     </div>
+  //     <div class="bookmark-section">
+  //       <div>Description:</div>
+  //       <div>${bookmark.desc}</div>
+  //     </div>
+  //     <div class="bookmark-section">
+  //       <div class="bookmark-link"><a href="${bookmark.url}">Visit Site</a></div>
+  //     </div>
+  //     <div class="bookmark-buttons bookmark-section">
+  //       <!-- disable edit button for now
+  //       <img class="flex-item edit-button" src="./images/edit-button.png" alt="Edit Button">
+  //       -->
+  //       <img class="flex-item delete-button" src="./images/delete-button.png" alt="Delete Button">
+  //     </div>
+  //   </div>
+  // `;
 };
 
 const generateBookmarkListString = function (bookmarkList) {
   // console.log("bookmarkList length is: " + bookmarkList.length);
-  const list = bookmarkList.map(bookmark => generateBookmarkElement(bookmark));
+
+  // filter list of bookmarks to the ones with rating >= user's rating filter selection
+  let list = bookmarkList.filter(bookmark => bookmark.rating >= store.state.filter);
+  
+  // change list to array of html strings
+  list = list.map(bookmark => generateBookmarkElement(bookmark));
+
+  // smush list together into a single html string
   return list.join('');
 };
 
 const generateMainView = function () {
+
+  // temporarily make all bookmarks expanded
+  store.bookmarks.forEach(bookmark => {bookmark.expanded=true;});
+
   // console.log(store.bookmarks[1]);
   // console.log(store.bookmarks.length);
   // store.bookmarks.forEach(bookmark => console.log(bookmark));
   return `
-  <div>
-    <img id="create-button" src="./images/create-button2.png" alt="Create New Bookmark">
-  </div>
+  <div id="main-wrapper">
+    <div>
+      <img id="create-button" src="./images/create-button2.png" alt="Create New Bookmark">
+    </div>
 
-  ${generateBookmarkListString(store.bookmarks)}
+    <div>
+      <select name="filter-results" id="filter-results">
+        <option value="0">Filter results</option>
+        <option value="1">1-star +</option>
+        <option value="2">2-stars +</option>
+        <option value="3">3-stars +</option>
+        <option value="4">4-stars +</option>
+        <option value="5">5 stars</option>
+      </select>
+    </div>
+
+    ${generateBookmarkListString(store.bookmarks)}
+  </div>
   `;
 }
 
@@ -161,6 +223,31 @@ const getBookmarkIdFromElement = function (element) {
     .data('id');
 };
 
+const handleRatingFilterChange = function () {
+  $('#filter-results').change(event => {
+    console.log("filter has been changed");
+    let filterSelection = parseInt($(event.target).val());
+    store.state.filter = filterSelection;
+    console.log("store.state.filter: " + store.state.filter);
+    render(generateMainView);
+  });
+}
+
+const handleExpandToggleClick = function () {
+  $('.bookmark-element').click(event => {
+    let id = getBookmarkIdFromElement(event.target);
+    // console.log(id);
+    let currentBookmark = store.bookmarks.find(bookmark => bookmark.id = id);
+    console.log(currentBookmark.id + " " + currentBookmark.expanded);
+    let newData = {expanded : !currentBookmark.expanded};
+    // console.log(newData);
+    store.findAndUpdate(id, newData);
+    console.log(currentBookmark.id + " " + currentBookmark.expanded);
+    // store.bookmarks.forEach(bookmark => console.log(bookmark.expanded));
+    render(generateMainView);
+  });
+}
+
 const handleEditButtonClick = function () {
   $('.bookmark-element').on("click", '.edit-button', event => {
     store.state.editing = true;
@@ -183,6 +270,7 @@ const handleEditButtonClick = function () {
 
 const handleDeleteButtonClick = function () {
   $('.bookmark-element').on("click", '.delete-button', event => {
+    event.preventDefault();
     console.log("delete button was just clicked");
     const id = getBookmarkIdFromElement(event.currentTarget);
     // const id = $(event.currentTarget).closest('.bookmark-element').data('id');
@@ -195,7 +283,7 @@ const handleDeleteButtonClick = function () {
 
     api.deleteBookmark(id)
     // .then( response => response.json())
-    .then(response => {
+    .then( () => {
       store.findAndDelete(id);
       render(generateMainView);
     });
@@ -230,11 +318,16 @@ const handleSaveButtonClick = function () {
 
       let newBookmark = {title,url,desc,rating,expanded};
 
-      store.state.creating = false;
-      store.addBookmark(newBookmark);
       api.createBookmark(newBookmark)
       // .then(response => response.json())
-      .then(response => render(generateMainView));
+      .then(response => {        
+        store.state.creating = false;
+        store.addBookmark(newBookmark);
+        console.log("store.bookmarks: " + store.bookmarks);
+        console.log("response: " + response);
+        console.log("api.getbookmarks: " + api.getBookmarks());
+        render(generateMainView);
+      });
     });
   }
 
@@ -266,7 +359,7 @@ const handleSaveButtonClick = function () {
       api.createBookmark(newBookmark)
       .then(() => render(generateMainView));
     });
-  }
+  };
 }
 
 const handleCreateButtonClick = function () {
@@ -279,6 +372,8 @@ const handleCreateButtonClick = function () {
 }
 
 const bindEventListeners = function () {
+  handleRatingFilterChange();
+  // handleExpandToggleClick();
   handleCreateButtonClick();
   handleEditButtonClick();
   handleDeleteButtonClick();

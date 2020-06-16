@@ -17,6 +17,7 @@ const main = function() {
   let bookmarks = api.getBookmarks()
   .then(response => {
     // set expanded value of each bookmark to false by default
+    console.log(response);
     response.forEach(bookmark => {
       bookmark.expanded = false;
       store.addBookmark(bookmark);
