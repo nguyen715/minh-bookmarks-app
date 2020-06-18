@@ -25,7 +25,7 @@ return ratingImageString;
 const generateBookmarkElement = function (bookmark) {
   console.log('bookmark.expanded: ' + bookmark.expanded);
   let bookmarkElementString = `
-    <div class="bookmark-element" data-id="${bookmark.id}">
+    <div class="bookmark-element" data-id="${bookmark.id}" tabindex="0">
       <div class="bookmark-section">
         <div>Title:</div>
         <div>${bookmark.title}</div>
@@ -125,7 +125,7 @@ const generateMainView = function () {
   return `
   <div id="main-wrapper">
     <div>
-      <img id="create-button" src="./images/create-button2.png" alt="Create New Bookmark">
+      <button id="create-button" alt="Create New Bookmark"><img src="./images/create-button2.png"></button>
     </div>
 
     <div>
@@ -225,7 +225,8 @@ const getBookmarkIdFromElement = function (element) {
 };
 
 const handleRatingFilterChange = function () {
-  $('#filter-results').change(event => {
+  $('main').on('change', '#filter-results', event => {
+  // $('#filter-results').change(event => {
     console.log("filter has been changed");
     let filterSelection = parseInt($(event.target).val());
     store.state.filter = filterSelection;
@@ -268,7 +269,10 @@ const handleDeleteButtonClick = function () {
   $('main').on('click', '.delete-button', event => {
     event.preventDefault();
     console.log("delete button was just clicked");
-    const id = getBookmarkIdFromElement($(event.currentTarget));
+    const id = getBookmarkIdFromElement(event.target);
+    // console.log($(event.target));
+    console.log(event.target);
+    // console.log("id of bookmark to be deleted is:" + id.toString());
     // const id = $(event.currentTarget).closest('.bookmark-element').data('id');
     // store.findAndDelete(id);
     // api.deleteBookmark(id)
@@ -294,7 +298,8 @@ const handleDeleteButtonClick = function () {
 }
 
 const handleCancelButtonClick = function () {
-  $('#cancel-button').click(event => {
+  $('main').on('click', '#cancel-button', event => {
+  // $('#cancel-button').click(event => {
     store.state.creating = false;
     store.state.editing = false;
     render(generateMainView);

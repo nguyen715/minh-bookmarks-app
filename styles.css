@@ -15,7 +15,14 @@ body {
 #create-button {
   display: block;
   margin: 0 auto 30px auto;
+  padding: 0;
   width: 220px;
+  border: none;
+
+}
+
+#create-button img {
+  max-width: 100%;
 }
 
 #filter-results {
