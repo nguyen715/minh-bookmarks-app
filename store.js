@@ -1,8 +1,8 @@
 // array of bookmark objects
-const bookmarks = [];
+let bookmarks = [];
 
 // state variables to decide if we need to render view for creating or editing bookmarks
-const state = {
+let state = {
     creating : false,
     editing : false,
     filter : 0,

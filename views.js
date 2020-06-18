@@ -3,7 +3,7 @@ import api from './api.js';
 
 const render = function (generatingFunction) {
   $('main').html(generatingFunction);
-  bindEventListeners();
+  // bindEventListeners();
 }
 
 const generateStarRatingElement = function (bookmark) {
@@ -23,6 +23,7 @@ return ratingImageString;
 
 // helper function only meant to be used in generateBookmarkListString function
 const generateBookmarkElement = function (bookmark) {
+  console.log('bookmark.expanded: ' + bookmark.expanded);
   let bookmarkElementString = `
     <div class="bookmark-element" data-id="${bookmark.id}">
       <div class="bookmark-section">
@@ -116,7 +117,7 @@ const generateBookmarkListString = function (bookmarkList) {
 const generateMainView = function () {
 
   // temporarily make all bookmarks expanded
-  store.bookmarks.forEach(bookmark => {bookmark.expanded=true;});
+  // store.bookmarks.forEach(bookmark => {bookmark.expanded=true;});
 
   // console.log(store.bookmarks[1]);
   // console.log(store.bookmarks.length);
@@ -219,7 +220,7 @@ const generateEditView = function (bookmark) {
 
 const getBookmarkIdFromElement = function (element) {
   return $(element)
-    .closest('.bookmark-element')
+    // .closest('.bookmark-element')
     .data('id');
 };
 
@@ -233,17 +234,12 @@ const handleRatingFilterChange = function () {
   });
 }
 
-const handleExpandToggleClick = function () {
-  $('.bookmark-element').click(event => {
-    let id = getBookmarkIdFromElement(event.target);
-    // console.log(id);
-    let currentBookmark = store.bookmarks.find(bookmark => bookmark.id = id);
+const handleExpandToggleClick = function () {  
+  $('main').on('click', '.bookmark-element', event => {
+    let id = getBookmarkIdFromElement($(event.currentTarget));
+    let currentBookmark = store.bookmarks.find(bookmark => bookmark.id === id);
+    currentBookmark.expanded = !currentBookmark.expanded;
     console.log(currentBookmark.id + " " + currentBookmark.expanded);
-    let newData = {expanded : !currentBookmark.expanded};
-    // console.log(newData);
-    store.findAndUpdate(id, newData);
-    console.log(currentBookmark.id + " " + currentBookmark.expanded);
-    // store.bookmarks.forEach(bookmark => console.log(bookmark.expanded));
     render(generateMainView);
   });
 }
@@ -269,22 +265,25 @@ const handleEditButtonClick = function () {
 }
 
 const handleDeleteButtonClick = function () {
-  $('.bookmark-element').on("click", '.delete-button', event => {
+  $('main').on('click', '.delete-button', event => {
     event.preventDefault();
     console.log("delete button was just clicked");
-    const id = getBookmarkIdFromElement(event.currentTarget);
+    const id = getBookmarkIdFromElement($(event.currentTarget));
     // const id = $(event.currentTarget).closest('.bookmark-element').data('id');
     // store.findAndDelete(id);
     // api.deleteBookmark(id)
     // .then(response => render(generateMainView));
 
     console.log(id);
-    console.log(api.getBookmarks());
+    // console.log(api.getBookmarks());
 
     api.deleteBookmark(id)
     // .then( response => response.json())
     .then( () => {
       store.findAndDelete(id);
+    })
+    .then( () => {
+      console.log(api.getBookmarks());
       render(generateMainView);
     });
 
@@ -307,8 +306,8 @@ const handleCancelButtonClick = function () {
 
 const handleSaveButtonClick = function () {
   // user clicked on create button
-  if(store.state.creating) {
-    $('#create-form').submit(event => {
+  // if(store.state.creating) {
+    $('main').on('submit', '#create-form', event => {
       event.preventDefault();
       let title = $('#title').val();
       let url = $('#url').val();
@@ -320,50 +319,61 @@ const handleSaveButtonClick = function () {
 
       api.createBookmark(newBookmark)
       // .then(response => response.json())
-      .then(response => {        
-        store.state.creating = false;
-        store.addBookmark(newBookmark);
-        console.log("store.bookmarks: " + store.bookmarks);
-        console.log("response: " + response);
-        console.log("api.getbookmarks: " + api.getBookmarks());
+      .then( (data) => {
+        store.addBookmark(data);
         render(generateMainView);
       });
+
+      // api.createBookmark(newBookmark)
+      // // .then(response => response.json())
+      // .then(response => {        
+      //   store.state.creating = false;
+      //   store.addBookmark(newBookmark);
+      //   console.log("store.bookmarks: " + store.bookmarks);
+      //   console.log("response: " + response);
+      //   return api.getBookmarks();
+      // })
+      // .then( response => response.json())
+      // .then( list => {
+      //   console.log("api.getbookmarks currently contains: " + list);
+      //   render(generateMainView);
+      // });
     });
-  }
+  // }
 
   // user clicked on edit button
-  else if(store.state.editing) {
-    $('#edit-form').submit(event => {
-      event.preventDefault();
+  // else if(store.state.editing) {
+  //   $('#edit-form').submit(event => {
+  //     event.preventDefault();
 
-      // const id = $(event.currentTarget).closest('.bookmark-data').data('id');
-      const id = getBookmarkIdFromElement(event.target);
-      console.log('store.state.editing is true, and bookmark id is:' + id);
+  //     // const id = $(event.currentTarget).closest('.bookmark-data').data('id');
+  //     const id = getBookmarkIdFromElement(event.target);
+  //     console.log('store.state.editing is true, and bookmark id is:' + id);
 
-      // let title = $('#title').val();
-      // let url = $('#url').val();
-      // let desc = $('#description').val();
-      // let rating = parseInt($('#rating').val());
+  //     // let title = $('#title').val();
+  //     // let url = $('#url').val();
+  //     // let desc = $('#description').val();
+  //     // let rating = parseInt($('#rating').val());
 
-      // let newBookmark = {title,url,desc,rating};
+  //     // let newBookmark = {title,url,desc,rating};
 
-      let newData = {
-        title : $('#title').val(),
-        url : $('#url').val(),
-        desc : $('#description').val(),
-        rating : parseInt($('#rating').val())
-      }
+  //     let newData = {
+  //       title : $('#title').val(),
+  //       url : $('#url').val(),
+  //       desc : $('#description').val(),
+  //       rating : parseInt($('#rating').val())
+  //     }
 
-      store.findAndUpdate(id, newData);
-      store.addBookmark(newBookmark);
-      api.createBookmark(newBookmark)
-      .then(() => render(generateMainView));
-    });
-  };
+  //     store.findAndUpdate(id, newData);
+  //     store.addBookmark(newBookmark);
+  //     api.createBookmark(newBookmark)
+  //     .then(() => render(generateMainView));
+  //   });
+  // };
 }
 
 const handleCreateButtonClick = function () {
-  $('#create-button').click(event => {
+  $('main').on('click', '#create-button', event => {
     store.state.creating = true;
     render(generateCreateView);
     // handleCancelButtonClick();
@@ -373,7 +383,7 @@ const handleCreateButtonClick = function () {
 
 const bindEventListeners = function () {
   handleRatingFilterChange();
-  // handleExpandToggleClick();
+  handleExpandToggleClick();
   handleCreateButtonClick();
   handleEditButtonClick();
   handleDeleteButtonClick();

@@ -21,6 +21,7 @@ const main = function() {
     response.forEach(bookmark => {
       bookmark.expanded = false;
       store.addBookmark(bookmark);
+      views.render(views.generateMainView);
     });
     views.render(views.generateMainView);
     views.bindEventListeners();
