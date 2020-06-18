@@ -27,7 +27,6 @@ const findAndUpdate = function (id, newData) {
 
 // remove bookmark object with specified id from bookmarks array
 const findAndDelete = function (id) {
-  // this.bookmarks = this.bookmarks.filter(currentBookmark => currentBookmark.id !== id);
   this.bookmarks = this.bookmarks.filter(currentBookmark => currentBookmark.id.toString() !== id.toString());
 }
 

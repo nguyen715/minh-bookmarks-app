@@ -60,7 +60,6 @@ body {
 
 .bookmark-rating {
   display: flex;
-  /* flex-direction: column; */
 }
 
 .star-rating {
@@ -76,13 +75,17 @@ body {
   text-align: center;
 }
 
-.bookmark-buttons {
+.bookmark-buttons, .delete-button {
   display: flex;
-  justify-content: space-evenly;
+  justify-content: space-evenly;  
+  background-color: #e2e2e2;
+  border: none;
+  padding: 0;
 }
 
 .bookmark-buttons img {
-  height: 30px;  
+  height: 30px;
+  margin: 0;
 }
 
 #create-view {
