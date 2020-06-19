@@ -41,9 +41,9 @@ const generateBookmarkElement = function (bookmark) {
           <div>${bookmark.desc}</div>
         </div>
         <div class="bookmark-section">
-          <div class="bookmark-link"><a href="${bookmark.url}">Visit Site</a></div>
+          <div class="bookmark-link" onclick="event.stopPropagation()"><a href="${bookmark.url}">Visit Site</a></div>
         </div>
-        <div class="bookmark-buttons bookmark-section">
+        <div class="bookmark-buttons bookmark-section" onclick="event.stopPropagation()">
           <!-- disable edit button for now
           <img class="flex-item edit-button" src="./images/edit-button.png" alt="Edit Button">
           -->
@@ -188,8 +188,8 @@ const handleRatingFilterChange = function () {
   });
 }
 
-const handleExpandToggleClick = function () {  
-  $('main:not(.bookmark-link)').on('click', '.bookmark-element:not(.bookmark-link)', event => {
+const handleExpandToggleClick = function () {
+  $('main').on('click', '.bookmark-element', event => {
     let id = getBookmarkIdFromElement($(event.currentTarget));
     let currentBookmark = store.bookmarks.find(bookmark => bookmark.id === id);
     currentBookmark.expanded = !currentBookmark.expanded;
@@ -197,7 +197,7 @@ const handleExpandToggleClick = function () {
   });
 
   //for keyboard accessibility
-  $('main:not(.bookmark-link)').on('keypress', '.bookmark-element', event => {
+  $('main').on('keypress', '.bookmark-element', event => {
     let id = getBookmarkIdFromElement($(event.currentTarget));
     let currentBookmark = store.bookmarks.find(bookmark => bookmark.id === id);
     currentBookmark.expanded = !currentBookmark.expanded;
