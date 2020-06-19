@@ -41,7 +41,7 @@ const generateBookmarkElement = function (bookmark) {
           <div>${bookmark.desc}</div>
         </div>
         <div class="bookmark-section">
-          <div class="bookmark-link" onclick="event.stopPropagation()"><a href="${bookmark.url}">Visit Site</a></div>
+          <div class="bookmark-link" onclick="event.stopPropagation()"><a href="${bookmark.url}" target="_blank">Visit Site</a></div>
         </div>
         <div class="bookmark-buttons bookmark-section" onclick="event.stopPropagation()">
           <!-- disable edit button for now
