@@ -18,11 +18,11 @@ body {
   padding: 0;
   width: 220px;
   border: none;
-
 }
 
 #create-button img {
   max-width: 100%;
+  margin: 0;
 }
 
 #filter-results {

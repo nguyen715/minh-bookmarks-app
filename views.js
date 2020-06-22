@@ -48,7 +48,8 @@ const generateBookmarkElement = function (bookmark) {
           <img class="flex-item edit-button" src="./images/edit-button.png" alt="Edit Button">
           -->
           <button class="flex-item delete-button"><img src="./images/delete-button.png" alt="Delete Button"></button>
-        </div>    
+        </div>
+      </div>
     `;
   }
 
@@ -80,9 +81,8 @@ const generateBookmarkListString = function (bookmarkList) {
 const generateMainView = function () {
   return `
   <div id="main-wrapper">
-    <div>
-      <button id="create-button" alt="Create New Bookmark"><img src="./images/create-button2.png"></button>
-    </div>
+
+    <button id="create-button" alt="Create New Bookmark"><img src="./images/create-button2.png"></button>
 
     <div>
       <select name="filter-results" id="filter-results">
@@ -224,6 +224,8 @@ const handleEditButtonClick = function () {
 const handleDeleteButtonClick = function () {
   $('main').on('click', '.delete-button', event => {
     const id = getBookmarkIdFromElement(event.target);
+    console.log(event.currentTarget);
+    console.log(event.target);
     api.deleteBookmark(id)
     .then( () => {
       store.findAndDelete(id);
