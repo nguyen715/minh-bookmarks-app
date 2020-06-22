@@ -9,11 +9,11 @@ const generateStarRatingElement = function (bookmark) {
   let ratingImageString = `<div class="star-rating flex-item">`;
 
   for(let i=0; i<bookmark.rating; i++) {
-    ratingImageString += `<img class="star filled-star" src="./images/star.png">`;
+    ratingImageString += `<img class="star filled-star" alt="filled rating star" src="./images/star.png">`;
   }
 
   for(let i=0; i<5-bookmark.rating; i++) {
-    ratingImageString += `<img class="star unfilled-star" src="./images/no-star.png">`;
+    ratingImageString += `<img class="star unfilled-star" alt="unfilled rating star" src="./images/no-star.png">`;
   }
 
   ratingImageString += `</div>`;
@@ -37,18 +37,17 @@ const generateBookmarkElement = function (bookmark) {
   if(bookmark.expanded) {
     bookmarkElementString += `
       <div class="bookmark-section">
-          <div>Description:</div>
-          <div>${bookmark.desc}</div>
-        </div>
-        <div class="bookmark-section">
-          <div class="bookmark-link" onclick="event.stopPropagation()"><a href="${bookmark.url}" target="_blank">Visit Site</a></div>
-        </div>
-        <div class="bookmark-buttons bookmark-section" onclick="event.stopPropagation()">
-          <!-- disable edit button for now
-          <img class="flex-item edit-button" src="./images/edit-button.png" alt="Edit Button">
-          -->
-          <button class="flex-item delete-button"><img src="./images/delete-button.png" alt="Delete Button"></button>
-        </div>
+        <div>Description:</div>
+        <div>${bookmark.desc}</div>
+      </div>
+      <div class="bookmark-section">
+        <div class="bookmark-link" onclick="event.stopPropagation()"><a href="${bookmark.url}" target="_blank">Visit Site</a></div>
+      </div>
+      <div class="bookmark-buttons bookmark-section">
+        <!-- disable edit button for now
+        <img class="flex-item edit-button" src="./images/edit-button.png" alt="Edit Button">
+        -->
+        <button class="flex-item delete-button"><img src="./images/delete-button.png" alt="Delete Button"></button>
       </div>
     `;
   }
@@ -82,11 +81,12 @@ const generateMainView = function () {
   return `
   <div id="main-wrapper">
 
-    <button id="create-button" alt="Create New Bookmark"><img src="./images/create-button2.png"></button>
+    <button id="create-button" alt="Create New Bookmark" name="create-button"><img src="./images/create-button2.png"></button>
 
     <div>
+      <label for="filter-results">Filter results</label>
       <select name="filter-results" id="filter-results">
-        <option value="0">Filter results</option>
+        <option value="0">Select one</option>
         <option value="1">1-star +</option>
         <option value="2">2-stars +</option>
         <option value="3">3-stars +</option>
@@ -111,7 +111,7 @@ const generateCreateView = function () {
         </div>      
         <div class="form-field">
           <label for="url">URL:</label>
-          <input type="url" name="url" id="url" required>
+          <input type="url" name="url" id="url" value="https://" required>
         </div>
         <div class="form-field">
           <label for="description">Description:</label>
@@ -190,7 +190,7 @@ const handleRatingFilterChange = function () {
 
 const handleExpandToggleClick = function () {
   $('main').on('click', '.bookmark-element', event => {
-    let id = getBookmarkIdFromElement($(event.currentTarget));
+    let id = getBookmarkIdFromElement($(event.target));
     let currentBookmark = store.bookmarks.find(bookmark => bookmark.id === id);
     currentBookmark.expanded = !currentBookmark.expanded;
     render(generateMainView);
@@ -198,7 +198,7 @@ const handleExpandToggleClick = function () {
 
   //for keyboard accessibility
   $('main').on('keypress', '.bookmark-element', event => {
-    let id = getBookmarkIdFromElement($(event.currentTarget));
+    let id = getBookmarkIdFromElement($(event.target));
     let currentBookmark = store.bookmarks.find(bookmark => bookmark.id === id);
     currentBookmark.expanded = !currentBookmark.expanded;
     render(generateMainView);
@@ -224,13 +224,9 @@ const handleEditButtonClick = function () {
 const handleDeleteButtonClick = function () {
   $('main').on('click', '.delete-button', event => {
     const id = getBookmarkIdFromElement(event.target);
-    console.log(event.currentTarget);
-    console.log(event.target);
     api.deleteBookmark(id)
     .then( () => {
       store.findAndDelete(id);
-    })
-    .then( () => {
       render(generateMainView);
     });
   });
@@ -241,8 +237,6 @@ const handleDeleteButtonClick = function () {
     api.deleteBookmark(id)
     .then( () => {
       store.findAndDelete(id);
-    })
-    .then( () => {
       render(generateMainView);
     });
   });

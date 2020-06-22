@@ -3,6 +3,7 @@ import api from "./api.js";
 import store from "./store.js";
 
 const main = function() {
+  views.render(views.generateMainView);
   let bookmarks = api.getBookmarks()
   .then(response => {
     // set expanded value of each bookmark to false by default

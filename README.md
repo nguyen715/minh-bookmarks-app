@@ -1,3 +1,6 @@
+Live site: https://thinkful-ei-panda.github.io/minh-bookmarks-app
+Github repo: https://github.com/thinkful-ei-panda/minh-bookmarks-app
+
 As a user:
 
 I can add bookmarks to my bookmark list. Bookmarks contain:
